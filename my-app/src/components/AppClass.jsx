@@ -26,7 +26,7 @@ export default class AppClass extends Component {
         <div className="todo-app-container">
         <div className="todo-app">
           <h2>Todo App</h2>
-          <form action="#">
+          <form action="#" onSubmit={addTodo}>
             <input
               type="text"
               className="todo-input"
