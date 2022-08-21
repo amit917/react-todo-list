@@ -2,6 +2,9 @@
 import '../App.css';
 import '../reset.css';
 import {useState} from 'react';
+import NoTodos from './NoTodos';
+import TodoForm from './TodoForm';
+import TodoList from './TodoList';
 
 function App() {
   /* Array desconstruction */
@@ -21,20 +24,16 @@ function App() {
 
 
 ]);
-const [todoInput,setTodosInput]=useState('');
+const [todoInput,setTodosInput]=useState(''); 
 const [idForTodo,setIdForTodo]=useState(4);
-function addTodo(event){
-  event.preventDefault();
-  if(todoInput.trim().length === 0){
-    return;
-  }
+function addTodo(todo){
   setTodos([...todos,{
    id:idForTodo,
-   title:todoInput,
+   title:todo,
    isComplete:false,
      
   }]);
-  setTodosInput('');
+  
   setIdForTodo(prevIdForTodo=> prevIdForTodo+1);
 
 }
@@ -42,9 +41,7 @@ function deleteTodo(id){
   //console.log('deleting todo id'+ id);
   setTodos([...todos].filter(todo=> todo.id !== id));
 }
-function handleInput(event){
-  setTodosInput(event.target.value); 
-}
+
 function completeTodo(id){
   const updatedTodos= todos.map(todo=>{
    if(todo.id === id){
@@ -92,83 +89,26 @@ function markAsEditing(id){
     <div className="todo-app-container">
       <div className="todo-app">
         <h2>Todo App</h2>
-        <form action="#" onSubmit={addTodo}>
-          <input
-            type="text"
-            value={todoInput}
-            onChange={handleInput }
+        <TodoForm addTodo={addTodo}/>
+         {todos.length > 0 ?(
+            <TodoList 
+            todos={todos}
+            completeTodo={completeTodo}
+            markAsEditing={markAsEditing}
+            updateTodo={updateTodo}
+            cancelEdit={cancelEdit}
+            deleteTodo = {deleteTodo}
 
-            className="todo-input"
 
-            placeholder="What do you need to do?"
+            />
+         ):(
+          
+          <NoTodos />
+         
+         )}
 
-          />
-        </form>
-
-        <ul className="todo-list">
-          { todos.map((todo,index)=>
-          <li key={todo.id} className="todo-item-container">
-            <div className="todo-item">
-              <input type="checkbox" onChange={()=>completeTodo(todo.id)} checked={todo.isComplete? true:false}/>
-              {!todo.isEditing ?(
-              <span onDoubleClick={()=> markAsEditing(todo.id)} className={`todo-item-label ${todo.isComplete ? 'line-through':''}`}>{todo.title}</span>
-              ):
-              (
-              <input type="text" onKeyDown={event=>{if(event.key === "Enter"){
-                updateTodo(event,todo.id);
-              } else if (event.key=== 'Escape'){
-                cancelEdit(event,todo.id);
-              }
-            
-            
-            }} onBlur={(event)=>updateTodo(event,todo.id)} 
-              
-              
-              className="todo-item-input" Defaultvalue={todo.title} autoFocous />
-              
-              
-              ) }
-            </div>
-            <button onClick={()=>deleteTodo(todo.id)} className="x-button">
-              <svg
-                className="x-button-icon"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M6 18L18 6M6 6l12 12"
-                />
-              </svg>
-            </button>
-          </li>
-)}
-        </ul>
-
-        <div className="check-all-container">
-          <div>
-            <div className="button">Check All</div>
-          </div>
-
-          <span>3 items remaining</span>
-        </div>
-
-        <div className="other-buttons-container">
-          <div>
-            <button className="button filter-button filter-button-active">
-              All
-            </button>
-            <button className="button filter-button">Active</button>
-            <button className="button filter-button">Completed</button>
-          </div>
-          <div>
-            <button className="button">Clear completed</button>
-          </div>
-        </div>
       </div>
+          
     </div>
   );
 }
